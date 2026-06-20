@@ -1,0 +1,12 @@
+# Compiler files
+cache/
+out/
+
+# Broadcast logs
+/broadcast
+
+# Halmos cache
+.halmos_cache/
+
+# Dotenv
+.env
