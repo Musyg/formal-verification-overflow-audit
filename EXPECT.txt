@@ -1,1 +1,1 @@
-counterexample
+proved

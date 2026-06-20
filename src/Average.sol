@@ -1,17 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.34;
 
-/// @title Average (vulnerable)
-/// @notice Returns the floor average of two unsigned integers.
-/// @dev BUG: the sum `a + b` is computed inside an `unchecked` block, so it can overflow
-///      uint256 and wrap around. When it does, `(a + b) / 2` is far outside the interval
-///      [min(a,b), max(a,b)]. This is the classic averaging-overflow bug (the same defect
-///      that lived in binary search implementations for years). It only triggers for inputs
-///      whose sum exceeds 2^256 - 1, so random fuzzing almost never hits it.
+/// @title Average (remediated)
+/// @notice Returns the floor average of two unsigned integers without overflow.
+/// @dev The sum `a + b` is never formed. Ordering the inputs and computing
+///      `lo + (hi - lo) / 2` keeps every intermediate value within uint256:
+///      `hi - lo` does not underflow because lo <= hi, and `lo + (hi - lo) / 2 <= hi`,
+///      so the result always lies in [lo, hi]. Halmos proves this for all inputs.
 library Average {
     function avg(uint256 a, uint256 b) internal pure returns (uint256) {
-        unchecked {
-            return (a + b) / 2;
-        }
+        (uint256 lo, uint256 hi) = a < b ? (a, b) : (b, a);
+        return lo + (hi - lo) / 2;
     }
 }
