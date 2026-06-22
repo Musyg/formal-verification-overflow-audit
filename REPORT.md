@@ -78,6 +78,18 @@ average being bounded can be driven to a wrong branch or a zero value, which bec
 severity in a pricing or liquidation path and negligible in a purely informational one. Rated as
 a proven correctness break with context-dependent consequence.
 
+## Informational, Gas & Non-Critical
+
+## I-01, unchecked block carries no safety rationale (Informational)
+
+The `unchecked` block (L13) has no comment justifying why wrapping is safe; here it is in fact unsafe and is the root cause of the finding. As a general practice every `unchecked` block should document the invariant that guarantees no overflow, which would have surfaced this defect at review time.
+
+## I-02, Function contract not specified in NatSpec (Informational)
+
+The NatSpec describes the bug but not the intended contract of `avg`: that the result must lie within `[min(a,b), max(a,b)]`. Stating the postcondition makes the function checkable, and is exactly the property the Halmos spec encodes.
+
+> No gas finding applies: the corrected `lo + (hi - lo) / 2` is the security fix, not an optimisation, and the function is otherwise minimal.
+
 ## Why a symbolic proof
 
 A fuzzer draws sample inputs and checks them; it can report success while the failing inputs are
